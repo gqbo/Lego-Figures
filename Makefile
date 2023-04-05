@@ -8,7 +8,7 @@ CFLAGS := -g -c
 CXXFLAGS := -g -c 
 LDFLAGS := -lssl -lcrypto
 DEPS := Socket.h
-TARGETS := ipv4-ssl-cli.out
+TARGETS := testFiguras.out
 
 ALL := $(TARGETS)
 $(info $$TARGETS = $(TARGETS))
