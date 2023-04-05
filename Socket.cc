@@ -219,9 +219,7 @@ int Socket::SSLConnect( char * host, char * port) {
       perror( "Socket::SSLConnect2" );
       exit( 2 );
    }
-
    // printf( "Connected with %s encryption\n", SSL_get_cipher( (SSL *) this->SSLStruct ) );
-
    return st;
 }
 
