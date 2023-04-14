@@ -15,7 +15,7 @@
  * @brief Muestra cuales figuras se encuentran disponibles en el servidor de piezas.
  * @return std::string figures_string con las figuras disponibles.
  */
-std::string showFigures(std::string html);
+void showFigures();
 
 /**
  * @brief Pide al cliente que digite la figura que desea
@@ -30,39 +30,14 @@ std::string requestFigure();
 void displayLegos(std::string html);
 
 int main( int argc, char * argv[] ) {
+   
    // Muestra las figuras que se pueden escoger
-   // Generar la solicitud HTTP.
-   std::string url1 = "GET /lego/index.php HTTP/1.1\r\nhost: redes.ecci\r\n\r\n";
-   char * os1 = (char *) "os.ecci.ucr.ac.cr";
-   char * reqOS1 = (char *) new char[url1.length() + 1];
-   std::strcpy(reqOS1, url1.c_str());
-   Socket socket1( 's', false);	// Se crea un nuevo socket stream para IPv4.
-   char buffer1[ SIZE ];
-   int count1;
-   int itr_count1 = 0;  // Contador de iteraciones.
-
-   socket1.InitSSL(); // Se inicializa el socket SSL.
-   socket1.SSLConnect( os1, (char *) "https" ); // Se conecta el socket SSL al servidor web.
-   socket1.SSLWrite(  (void *) reqOS1, strlen( reqOS1 ));
-
-   // String para almacenar la respuesta del servidor web.
-   std::string html1;
-   while ( (count1 = socket1.SSLRead( buffer1, SIZE )) > 0 ) {
-      if(itr_count1 >= 1) {
-         buffer1[count1] = '\0'; // Se agrega un terminador nulo al final del string.
-         html1 += buffer1;       // Se agrega el texto leido al string html
-      }
-      memset( buffer1, 0, SIZE );
-      itr_count1++;
-   }
-
-   std::cout << showFigures(html1);
-
-   // Borrar el buffer de solicitud.
-   delete[] reqOS1;
+   showFigures();
 
    // Solicitar el nombre de la figura al usuario y lo almacena en input_string.
    std::string input_string = requestFigure();
+
+   printf("\n");
 
    // Generar la solicitud HTTP.
    std::string url = "GET /lego/list.php?figure=" + input_string + " HTTP/1.1\r\nhost: redes.ecci\r\n\r\n";
@@ -96,29 +71,22 @@ int main( int argc, char * argv[] ) {
    return 0;
 }
 
-std::string showFigures(std::string html)  {
-   // La expresión regular para coincidir con la lista de figuras de Lego.
-   std::regex regex(R"(<OPTION value=\"\s*(.+?)\s*\">\s*(.+?)\s*</OPTION>)");
-   // Iterar sobre coincidencias
-    std::sregex_iterator it(html.begin(), html.end(), regex); 
-    std::sregex_iterator end;
-   
-   std::string list = "Figuras disponibles:\n";
-   int counter = 0;
-   while (it != end) {
-      // Obtener la coincidencia.
-      std::smatch match = *it;
-      // Extraiga la cantidad y descripción de la pieza de Lego.
-      if (counter != 0) {
-         std::string figure = match[1].str();
-         // Generar el resultado
-         list += figure + "\n";
+void showFigures()  {
+   std::vector<std::string> figuras_disponibles = 
+   {"blacksheep","dragon","duck","elephant","fish","giraffe","horse","lion",
+   "monkey","penguin","roadrunner","shark","squid","swan","turtle","whitesheep"};
+
+   std::cout << "Figuras Disponibles:" << std::endl;
+
+   for(int i = 0; i < figuras_disponibles.size(); i++){
+      if(i != figuras_disponibles.size()-1){
+         std::cout << figuras_disponibles[i] << ", ";
+      } else {
+         std::cout << figuras_disponibles[i];
       }
-      counter++;
-      // Aumentar el iterador.
-      ++it;
    }
-   return list;
+
+   printf("\n\n");
 }
 
 std::string requestFigure() {
