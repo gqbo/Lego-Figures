@@ -24,6 +24,10 @@ El programa proporciona un Makefile que facilita la compilación través de la l
 
 ---
 
+### **Casos de prueba:**
+
+Para los casos de prueba se intenta escribir entradas de texto no válidas que podrían lograr que el programa se caiga. Entre estos casos de prueba están, escribir caracteres numéricos, entradas de texto que no coincidan con ninguna figura, carácteres especiales etc. Para el manejo de estos casos aparte, se implementa un mensaje de error que imprime el siguiente texto en caso de que la entrada no coincida con alguna de las figuras disponibles: "La figura no existe o no se encontraron piezas de lego para esta figura".
+
 ## **Créditos**
 
 Copyrigth 2023.
