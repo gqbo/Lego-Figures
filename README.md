@@ -20,7 +20,7 @@ El programa proporciona un Makefile que facilita la compilación través de la l
 
 ### **Ejecución:**
 
-* Una vez compilado se genera el ejecutable testFiguras.out, el cual se puede ejecutar escribiendo en la terminal **./testFiguras.out**
+* Una vez compilado se genera el ejecutable Cliente.out, el cual se puede ejecutar escribiendo en la terminal **./Cliente.out**
 
 ---
 

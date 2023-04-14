@@ -8,7 +8,7 @@ CFLAGS := -g -c
 CXXFLAGS := -g -c 
 LDFLAGS := -lssl -lcrypto
 DEPS := Socket.h
-TARGETS := testFiguras.out
+TARGETS := Cliente.out
 
 ALL := $(TARGETS)
 $(info $$TARGETS = $(TARGETS))
@@ -20,8 +20,8 @@ $(info $$TARGETS = $(TARGETS))
 	$(info $$^ = $^)
 	$(CXX) $^ Socket.o $(LDFLAGS) -o $^
 
-testFiguras.out: testFiguras.o Socket.o
-	$(CXX) testFiguras.o Socket.o $(LDFLAGS) -o $@
+Cliente.out: Cliente.o Socket.o
+	$(CXX) Cliente.o Socket.o $(LDFLAGS) -o $@
 
 clean:
 	rm -f *.o *.out
