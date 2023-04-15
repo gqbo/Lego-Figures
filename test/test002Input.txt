@@ -1,0 +1,4 @@
+Figuras Disponibles:
+blacksheep, dragon, duck, elephant, fish, giraffe, horse, lion, monkey, penguin, roadrunner, shark, squid, swan, turtle, whitesheep
+
+Ingrese el nombre de una figura: cat
