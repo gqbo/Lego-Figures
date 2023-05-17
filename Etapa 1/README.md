@@ -30,9 +30,8 @@ Para los casos de prueba se intenta escribir entradas de texto no válidas que p
 
 ## **Créditos**
 
-Copyrigth 2023.
+Copyright 2023.
 
-Andrés Zúñiga Méndez <andres.zunigamendez@ucr.ac.cr>
 Gabriel Gonzáles Flores <gabriel.gonzalesflores@ucr.ac.cr>
 Juan Aguilar Torres <juan.aguilartorres@ucr.ac.cr>
 Sebastián Rodríguez Tencio <sebastian.rodrigueztencio@ucr.ac.cr>
