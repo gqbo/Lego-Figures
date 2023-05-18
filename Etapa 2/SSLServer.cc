@@ -32,7 +32,7 @@ void task( Socket * client ) {
    client->SSLRead( a, BUFSIZE );	// Read a string from client, data will be limited by BUFSIZE bytes
    std::cout << "Server received: " << a << std::endl;
    std::string htmlName(a);
-   htmlName += ".html";
+   htmlName = "figures/" + htmlName + ".html";
     
    std::ifstream file(htmlName, std::ios::binary);
    if (!file.is_open()) {
@@ -72,7 +72,7 @@ int main( int argc, char ** argv ) {
 
    s1->Bind( PORT );		// Port to access this mirror server
    s1->Listen( 5 );		// Set backlog queue to 5 conections
-   s1->SSLInitServer( "ci0123.pem", "ci0123.pem" );
+   s1->SSLInitServer( "cert/ci0123.pem", "cert/ci0123.pem" );
 
    for( ; ; ) {
       client = s1->Accept();	 	// Wait for a client conection
