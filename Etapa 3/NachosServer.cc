@@ -41,8 +41,8 @@ void task( Socket * client) {
     
    std::ifstream file(htmlName, std::ios::binary);
    if (!file.is_open()) {
-      std::cerr << "404: No se encontró archivo." << std::endl;
-      std::string notFound = "404: No se encontró archivo.";
+      std::cerr << "No se encontró archivo." << std::endl;
+      std::string notFound = "No hay figura con ese nombre.";
       char* sendBack = new char[notFound.length() + 1];
       std::strcpy(sendBack, notFound.c_str());
       client->Write( sendBack, strlen(sendBack) );
@@ -66,14 +66,14 @@ void task( Socket * client) {
    // Find the starting position of the content within the <pref> tag
    size_t startPos = html_string.find(startTag);
    if (startPos == std::string::npos)
-      parsed = "404: No se encontró archivo, en formato HTML.";
+      parsed = "La pieza se encontró, pero no corresponde al formato esperado.";
    
    startPos += startTag.length();
 
    // Find the ending position of the content within the </pref> tag
    size_t endPos = html_string.find(endTag);
    if (endPos == std::string::npos)
-      parsed = "404: No se encontró archivo, en formato HTML.";
+      parsed = "La pieza se encontró, pero no corresponde al formato esperado.";
 
    // Extract the content between the start and end positions
    std::string content = html_string.substr(startPos, endPos - startPos);
@@ -88,8 +88,8 @@ void task( Socket * client) {
    parsed = content;
    /*Parsing End*/
 
-   char* sendBack = new char[html_string.length() + 1];
-   std::strcpy(sendBack, html_string.c_str());
+   char* sendBack = new char[parsed.length() + 1];
+   std::strcpy(sendBack, parsed.c_str());
    
    client->Write( sendBack, strlen(sendBack) );		// Write it back to client, this is the mirror function
    client->Close();		// Close socket in parent
