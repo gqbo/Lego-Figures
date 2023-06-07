@@ -23,7 +23,7 @@ $(info $$TARGETS = $(TARGETS))
 SSLServer.out: SSLServer.o Socket.o
 	$(CXX) SSLServer.o Socket.o $(LDFLAGS) -o $@
 
-SSLServer.out: NachosServer.o Socket.o
+NachosServer.out: NachosServer.o Socket.o
 	$(CXX) NachosServer.o Socket.o $(LDFLAGS) -o $@
 
 SSLClient.out: SSLClient.o HttpClient.o Socket.o
