@@ -763,7 +763,7 @@ void NachOS_Connect() {		// System call 31
 	}
 
 	if (-1 == result) {
-		printf("Error connect\n");
+		printf("Error 404: No se pudo establecer conexión con el servidor\n");
 	}
 
 	machine->WriteRegister(2, result);
