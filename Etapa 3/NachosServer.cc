@@ -41,8 +41,8 @@ void task( Socket * client) {
     
    std::ifstream file(htmlName, std::ios::binary);
    if (!file.is_open()) {
-      std::cerr << "No se encontró archivo." << std::endl;
-      std::string notFound = "No hay figura con ese nombre.";
+      std::cerr << "Error 404: No se encontró el archivo solicitado." << std::endl;
+      std::string notFound = "Error 404: No hay figura con ese nombre.";
       char* sendBack = new char[notFound.length() + 1];
       std::strcpy(sendBack, notFound.c_str());
       client->Write( sendBack, strlen(sendBack) );
@@ -58,35 +58,38 @@ void task( Socket * client) {
 
    file.close();
 
-   /*Parsing Start*/
-   std::string parsed;
-   std::string startTag = "<pref>";
-   std::string endTag = "</pref>";
+   // Inicializar la cantidad total de piezas de Lego en 0.
+   int total_quantity = 0;
+   std::string html;
    
-   // Find the starting position of the content within the <pref> tag
-   size_t startPos = html_string.find(startTag);
-   if (startPos == std::string::npos)
-      parsed = "La pieza se encontró, pero no corresponde al formato esperado.";
-   
-   startPos += startTag.length();
-
-   // Find the ending position of the content within the </pref> tag
-   size_t endPos = html_string.find(endTag);
-   if (endPos == std::string::npos)
-      parsed = "La pieza se encontró, pero no corresponde al formato esperado.";
-
-   // Extract the content between the start and end positions
-   std::string content = html_string.substr(startPos, endPos - startPos);
-
-   // Replace " / " with a newline character '\n'
-   size_t delimiterPos = 0;
-   while ((delimiterPos = content.find("/", delimiterPos)) != std::string::npos) {
-      content.replace(delimiterPos, 3, "\n");
-      delimiterPos += 1;  // Move past the inserted newline character
+   // La expresión regular para coincidir con la lista de piezas de Lego.
+   std::regex regex(R"((\d+)\s*(brick.*?)\s*\/)");
+   // Iterar sobre coincidencias
+    std::sregex_iterator it(html_string.begin(), html_string.end(), regex); 
+    std::sregex_iterator end;
+    //std::cout << "Hola displayLegos" << html << std::endl;
+   while (it != end) {
+      // Obtener la coincidencia.
+      std::smatch match = *it;
+      // Extraiga la cantidad y descripción de la pieza de Lego.
+      int quantity = std::stoi(match[1].str());
+      total_quantity += quantity;
+      std::string description = match[2].str();
+      // Generar el resultado
+      html =  html + std::to_string(quantity) + " " + description + "\n";
+      // Aumentar el iterador.
+      ++it;
+   }
+   // Verificar si se encontraron piezas de Lego.
+   if (total_quantity == 0) {
+      html = " ";
+      html = html + "La figura no existe o no se encontraron piezas de lego para esta figura." + "\n";
+   } else {
+      // Imprimir el total de piezas de Lego.
+      html =  html + "Total de piezas para armar esta figura: " + std::to_string(total_quantity) + "\n";
    }
 
-   parsed = content;
-   /*Parsing End*/
+   std::string parsed = html;
 
    char* sendBack = new char[parsed.length() + 1];
    std::strcpy(sendBack, parsed.c_str());

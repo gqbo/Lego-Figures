@@ -726,7 +726,7 @@ void NachOS_Socket() {			// System call 30
  * ID, IP, Port
  */
 void NachOS_Connect() {		// System call 31
-   DEBUG('t', "Connecting a socket\n");
+   DEBUG('g', "Connecting a socket\n");
 	struct sockaddr_in servidor;
 
 	int port;
@@ -750,10 +750,9 @@ void NachOS_Connect() {		// System call 31
 
 		ipAddr++;
 		index++;
-		}
+	}
 
 	if (currentThread->miTabla->isOpened(sockId)) {
-
 		int unixHandle = currentThread->miTabla->getUnixHandle(sockId);
 
 		servidor.sin_family = AF_INET;
@@ -761,16 +760,14 @@ void NachOS_Connect() {		// System call 31
 		servidor.sin_port = htons(port);
 
 		result = connect(unixHandle, (struct sockaddr*)&servidor, sizeof(servidor));
-
-		}
+	}
 
 	if (-1 == result) {
-
-		printf("Error conect");
-
+		printf("Error connect\n");
 	}
 
 	machine->WriteRegister(2, result);
+   DEBUG('g', "Exiting NachOS_Connect\n");
    returnFromSystemCall();
 }
 
