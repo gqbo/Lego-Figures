@@ -41,8 +41,8 @@ void task( Socket * client) {
     
    std::ifstream file(htmlName, std::ios::binary);
    if (!file.is_open()) {
-      std::cerr << "No se encontró archivo." << std::endl;
-      std::string notFound = "No hay figura con ese nombre.";
+      std::cerr << "404: No se encontró archivo." << std::endl;
+      std::string notFound = "404: No se encontró archivo.";
       char* sendBack = new char[notFound.length() + 1];
       std::strcpy(sendBack, notFound.c_str());
       client->Write( sendBack, strlen(sendBack) );
@@ -57,6 +57,36 @@ void task( Socket * client) {
    }
 
    file.close();
+
+   /*Parsing Start*/
+   std::string parsed;
+   std::string startTag = "<pref>";
+   std::string endTag = "</pref>";
+   
+   // Find the starting position of the content within the <pref> tag
+   size_t startPos = html_string.find(startTag);
+   if (startPos == std::string::npos)
+      parsed = "404: No se encontró archivo, en formato HTML.";
+   
+   startPos += startTag.length();
+
+   // Find the ending position of the content within the </pref> tag
+   size_t endPos = html_string.find(endTag);
+   if (endPos == std::string::npos)
+      parsed = "404: No se encontró archivo, en formato HTML.";
+
+   // Extract the content between the start and end positions
+   std::string content = html_string.substr(startPos, endPos - startPos);
+
+   // Replace " / " with a newline character '\n'
+   size_t delimiterPos = 0;
+   while ((delimiterPos = content.find("/", delimiterPos)) != std::string::npos) {
+      content.replace(delimiterPos, 3, "\n");
+      delimiterPos += 1;  // Move past the inserted newline character
+   }
+
+   parsed = content;
+   /*Parsing End*/
 
    char* sendBack = new char[html_string.length() + 1];
    std::strcpy(sendBack, html_string.c_str());
