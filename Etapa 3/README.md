@@ -12,7 +12,8 @@ El servidor inicia con los encabezados necesarios para la programación de socke
 ### **Compilacion:**
 
 El programa proporciona un Makefile que facilita la compilación través de la línea de comandos.
-* Para compilar y generar el ejecutable, escriba en la terminal el comando **make SSLServer.out** y en otra terminal escriba **make SSLClient.out**.
+* Para compilar y generar el ejecutable, escriba en la terminal el comando **make SSLServer.out** y en otra terminal escriba **make SSLClient.out**
+* Para compilar el cliente de NachOS es necesario levantar el servidor sin SSL, para esto se utiliza la instrucción **make NachosServer.out**
 * Para eliminar un ejecutable, escriba en la terminal el comando **make clean**
 
 ---
@@ -20,6 +21,7 @@ El programa proporciona un Makefile que facilita la compilación través de la l
 ### **Ejecución:**
 
 * Una vez compilado se genera el ejecutable Cliente.out, el cual se puede ejecutar escribiendo en la terminal **./Cliente.out**
+* Para correr el cliente de NachOS es necesario situarse en userprog y asegurarse de que el ejecutable **nachos** se encuentre, si no se puede generar haciendo **make**, una vez comprobado que se encuentre se procede a correr el siguiente comando **./nachos -x ../test/client**
 
 ---
 
