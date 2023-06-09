@@ -113,13 +113,13 @@ int main( int argc, char ** argv ) {
 
    s1 = new Socket( 's' );
 
-   s1->Bind( PORT );		// Port to access this mirror server
-   s1->Listen( 5 );		// Set backlog queue to 5 conections
+   s1->Bind( PORT );
+   s1->Listen( 5 );
 
    for( ; ; ) {
-      client = s1->Accept();	 	// Wait for a client conection
+      client = s1->Accept();
       worker = new std::thread( task, client);
       worker->detach();
    }
 
-}
+}t
