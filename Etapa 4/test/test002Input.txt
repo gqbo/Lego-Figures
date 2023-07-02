@@ -1,0 +1,4 @@
+Figuras Disponibles:
+dalmata
+
+Ingrese el nombre de una figura: cat
