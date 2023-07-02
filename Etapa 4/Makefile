@@ -20,14 +20,14 @@ $(info $$TARGETS = $(TARGETS))
 	$(info $$^ = $^)
 	$(CXX) $^ Socket.o $(LDFLAGS) -o $^
 
-SSLServer.out: SSLServer.o Socket.o
-	$(CXX) SSLServer.o Socket.o $(LDFLAGS) -o $@
+Client.out: Client.o MethodsClient.o Socket.o
+	$(CXX) Client.o MethodsClient.o Socket.o $(LDFLAGS) -o $@
 
-NachosServer.out: NachosServer.o Socket.o
-	$(CXX) NachosServer.o Socket.o $(LDFLAGS) -o $@
+IntermediateServer.out: IntermediateServer.o MethodsIntermediate.o Socket.o
+	$(CXX) IntermediateServer.o MethodsIntermediate.o Socket.o $(LDFLAGS) -o $@
 
-SSLClient.out: SSLClient.o HttpClient.o Socket.o
-	$(CXX) SSLClient.o HttpClient.o Socket.o $(LDFLAGS) -o $@
+PiecesServer.out: PiecesServer.o MethodsPieces.o Socket.o
+	$(CXX) PiecesServer.o MethodsPieces.o Socket.o $(LDFLAGS) -o $@
 
 clean:
 	rm -f *.o *.out
