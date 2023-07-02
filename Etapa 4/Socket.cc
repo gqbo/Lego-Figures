@@ -284,6 +284,11 @@ void Socket::SetIDSocket(int id){
    this->idSocket = id;
 }
 
+int Socket::getIDSocket(){
+   return this->idSocket;
+}
+
+
 int Socket::sendTo(const void *buf, size_t len, const void *other) {
    int st = -1;
 

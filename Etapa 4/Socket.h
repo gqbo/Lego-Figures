@@ -121,6 +121,11 @@ class Socket {
         void SetIDSocket(int newId);
 
         /**
+         * @brief Returna el ID del socket.
+        */
+        int getIDSocket();
+
+        /**
          * @brief Envía datos a otro socket.
          * @param buf Un puntero al búfer de datos que se va a enviar.
          * @param len La longitud del búfer de datos que se va a enviar.
