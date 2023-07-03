@@ -22,19 +22,22 @@ void MethodsPieces::task( Socket * client ) {
 
 std::string MethodsPieces::handlePresent(bool isResponse){
     // Create a UDP socket
-    Socket* socket = new Socket('u');
+    Socket* socket = new Socket('d');
     struct sockaddr_in other;
     char buffer[1024]; 
     
     memset(&other, 0, sizeof(other)); 
     other.sin_family = AF_INET;
     other.sin_port = htons(INTERMEDIARY_UDP_PORT);
+    printf("handlePresent: Se define puerto INTERMEDIARY_UDP_PORT en el socket\n");
 
     // Set IP for the a specific server
     inet_pton(AF_INET, "127.0.0.1", &other.sin_addr);
     other.sin_addr.s_addr = INADDR_ANY;
+    printf("handlePresent: Se define IP 127.0.0.1 en el socket y escucha cualquier IP\n");
 
     socket->recvFrom((void *)buffer, 1024, (void *)&other);
+    printf("handlePresent: Recibe el mensaje broadcast\n");
     printf("Intermediate message received: %s\n", buffer); 
     
     // // Message to Send: Code Separator IP::Port

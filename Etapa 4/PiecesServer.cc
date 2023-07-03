@@ -2,22 +2,27 @@
 
 
 int main(int argc, char** argv) {
-    Socket * s1;
-    s1 = new Socket( 'd' );	// Creates an UDP socket: datagram
-
+    Socket* s1;
+    s1 = new Socket('u');  // Crea un socket UDP: datagrama
     struct sockaddr other;
     MethodsPieces mp;
     char buffer[1024];
-    char *hello = (char *) "Hello from intermediate server"; 
-    s1->Bind( INTERMEDIARY_UDP_PORT );
+    
+    // Realiza el bind en el puerto PIECES_UDP_PORT
+    s1->Bind(PIECES_UDP_PORT);
+    printf("Pieces Server: Bind a puerto PIECES_UDP_PORT\n");
     memset( &other, 0, sizeof( other ) );
 
-    mp.handlePresent(1);
-
-    int n = s1->recvFrom( (void *) buffer, 1024, (void *) &other );	// Mensaje de los www servers
+    int n = s1->recvFrom((void*)buffer, sizeof(buffer), (void*)&other);
     buffer[n] = '\0'; 
-    printf("Server: message received: %s\n", buffer);
+    printf("Pieces: Broadcast message received: %s\n", buffer);
+
+
+
+    // mp.handlePresent(1);
+    // printf("handlePresent: Se termina el handlePresent\n");
 }
+
 
 
 
