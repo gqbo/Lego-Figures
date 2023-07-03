@@ -14,6 +14,7 @@ void MethodsIntermediate::handleDiscover() {
    Socket* socket = new Socket('u');
    struct sockaddr_in other;
    // Enable BROADCAST to send a LEGO DISCOVER message
+   printf("Enable BROADCAST to send a LEGO DISCOVER message.\n");
    int enableBroadcast = 1;
    setsockopt(socket->getIDSocket(), SOL_SOCKET, SO_BROADCAST, &enableBroadcast, sizeof(enableBroadcast));
 
@@ -22,21 +23,24 @@ void MethodsIntermediate::handleDiscover() {
    other.sin_port = htons(PIECES_UDP_PORT);
 
    // Set IP for the BROADCAST
-   inet_pton(AF_INET, "172.16.123.255", &other.sin_addr);
+   // inet_pton(AF_INET, "172.16.123.255", &other.sin_addr);
+   inet_pton(AF_INET, "127.0.0.1", &other.sin_addr);
 
    // Message to Send: Code Separator IP::Port
    /** TODO: Añadir IP de este servidor*/
-   std::string message_string = std::to_string(LEGO_DISCOVER) + SEPARATOR + "IP (Pendiente)" + "::" + std::to_string(INTERMEDIARY_UDP_PORT);
+   printf("Creando mensaje con codigo LEGO_DISCOVER.\n");
+   std::string message_string = std::to_string(LEGO_DISCOVER) + SEPARATOR + "127.0.0.1" + ":" + std::to_string(INTERMEDIARY_UDP_PORT);
    const char* message = message_string.c_str();
 
    // Send BROADCAST message to every server on the PIECES_UDP_PORT
+   printf("Send BROADCAST message.\n");
    socket->sendTo((void *)message, strlen(message), (void *)&other);
 }
 
 // LEGO REQUEST
 std::string MethodsIntermediate::handleRequest(const std::string& request) {
    // Create a TCP socket
-   Socket* socket = new Socket('t');
+   Socket* socket = new Socket('s');
    // Obtain server IP from map
 
    /** TODO: Programar obtención de IP Según figura */
