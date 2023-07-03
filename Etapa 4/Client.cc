@@ -1,6 +1,4 @@
-// SSL
 #include <openssl/ssl.h>
-
 #include "ProtocolHeader.hpp"
 #include "MethodsClient.h"
 #include "Socket.h"
@@ -8,14 +6,14 @@
 #define BUFSIZE 512
 
 int main( int argc, char ** argv ) {
-   Socket s('s');     // Crea un socket de IPv4, tipo "stream"
+   Socket s('s');
    char buffer[ BUFSIZE + 1];
    
    MethodsClient client;
-   // Muestra las figuras que se pueden escoger
+   // Shows the figures that can be selected
    client.showFigures();
 
-    // Solicitar el nombre de la figura al usuario y lo almacena en input_string.
+   // Solicitar el nombre de la figura al usuario y lo almacena en input_string.
    std::string input_string = client.requestFigure();
    char* input = new char[input_string.length() + 1];
    strcpy(input, input_string.c_str());
