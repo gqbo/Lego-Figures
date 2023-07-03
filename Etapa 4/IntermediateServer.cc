@@ -7,20 +7,12 @@ int main(int argc, char** argv) {
     struct sockaddr other;
     MethodsIntermediate mi;
     char buffer[1024];
-    char *hello = (char *) "Hello from intermediate server"; 
-    s1->Bind( PIECES_UDP_PORT );
+    s1->Bind( INTERMEDIARY_UDP_PORT );
+    printf("Intermediate Server: Bind a puerto INTERMEDIARY_UDP_PORT\n");
     memset( &other, 0, sizeof( other ) );
 
     mi.handleDiscover();
-
-    for(;;){}
-    //int n = s1->recvFrom( (void *) buffer, 1024, (void *) &other );	// Mensaje de los www servers
-    //buffer[n] = '\0'; 
-    //printf("Server: message received: %s\n", buffer);
-
-    //n = s1->recvFrom( (void *) buffer, 1024, (void *) &other );	// Mensaje de los www servers
-    //buffer[n] = '\0'; 
-    //printf("Server: message received: %s\n", buffer);
+    printf("Intermediate Server: Se termina el handleDiscover.\n");
 }
 
 
