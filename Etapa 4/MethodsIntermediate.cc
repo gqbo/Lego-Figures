@@ -9,36 +9,27 @@
 #include "MethodsIntermediate.h"
 
 void MethodsIntermediate::handleDiscover() {
-   // Send a UDP broadcast message to all servers on the PIECES_UDP_PORT
+   /*----------- CREATES SOCKET UDP ------------*/
+   /*---------AND ENABLES BROADCATS CONFIG ------------*/
    Socket* socket = new Socket('u');
    struct sockaddr_in other;
-
-   // Enable BROADCAST to send a LEGO DISCOVER message
    int enableBroadcast = 1;
    setsockopt(socket->getIDSocket(), SOL_SOCKET, SO_BROADCAST, &enableBroadcast, sizeof(enableBroadcast));
-   printf("handleDiscover: Se configura socket para BROADCAST\n");
-
-   // Set memory, family and port into the variable other.
    memset(&other, 0, sizeof(other)); 
    other.sin_family = AF_INET; 
    other.sin_port = htons(PIECES_UDP_PORT);
-   printf("handleDiscover: Va a enviar BROADCAST al puerto PIECES_UDP_PORT\n");
-
-   // Set IP for the BROADCAST
    inet_pton(AF_INET, "255.255.255.255", &other.sin_addr);
-   printf("handleDiscover: Va a enviar BROADCAST a la IP 255.255.255.255\n");
+   printf("handleDiscover: Se crea socket 255.255.255.255:PIECES_UDP_PORT\n");
 
-   // Message to Send: Code Separator IP::Port
-   /** TODO: Add broadcast IP after testing*/
-   std::string message_string = std::to_string(LEGO_DISCOVER) + SEPARATOR + "255.255.255.255" + ":" + std::to_string(INTERMEDIARY_UDP_PORT);
+   /*----------- CREATES BROADCAST MESSAGE ------------*/
+   std::string message_string = std::to_string(LEGO_DISCOVER) + SEPARATOR + "127.0.0.2" + ":" + std::to_string(INTERMEDIARY_UDP_PORT);
    const char* message = message_string.c_str();
-   printf("handleDiscover: Se crea mensaje con formato LEGO_DISCOVER\n");
+   printf("handleDiscover: Se crea mensaje BROADCAST DISCOVER\n");
 
-   // Send BROADCAST message to every server on the PIECES_UDP_PORT
+   /*---- SENDS BROADCAST MESSAGE TO PIECES_UDP_PORT ------*/
    socket->sendTo((void *)message, strlen(message), (void *)&other);
-   printf("handleDiscover: Se envia mensaje BROADCAST en el socket al puerto PIECES_UDP_PORT con la IP 255.255.255.255\n");
+   printf("handleDiscover: Se envia mensaje BROADCAST a 255.255.255.255:PIECES_UDP_PORT\n");
 }
-
 
 std::string MethodsIntermediate::handleRequest(const std::string& request) {
    // Create a TCP socket

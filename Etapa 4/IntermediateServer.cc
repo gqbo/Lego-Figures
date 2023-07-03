@@ -2,17 +2,25 @@
 
 
 int main(int argc, char** argv) {
-    Socket * s1;
-    s1 = new Socket( 'd' );	// Creates an UDP socket: datagram
-    struct sockaddr other;
+
     MethodsIntermediate mi;
     char buffer[1024];
-    s1->Bind( INTERMEDIARY_UDP_PORT );
-    printf("Intermediate Server: Bind a puerto INTERMEDIARY_UDP_PORT\n");
-    memset( &other, 0, sizeof( other ) );
 
+    /*----------- CREATES SOCKET UDP ------------*/
+    Socket * socketUDP;
+    socketUDP = new Socket( 'd' );	// Creates an UDP socket: datagram
+    struct sockaddr other;
+    socketUDP->Bind( INTERMEDIARY_UDP_PORT );
+    memset( &other, 0, sizeof( other ) );
+    printf("Intermediate Server: Socket UDP bind a puerto INTERMEDIARY_UDP_PORT\n");
+
+    /*-------- HANDLES UDP BROADCAST MESSAGE ------------*/
     mi.handleDiscover();
-    printf("Intermediate Server: Se termina el handleDiscover.\n");
+
+    /*-------- RECEIVES PRESENT MESSAGE ------------*/
+    int n = socketUDP->recvFrom((void*)buffer, sizeof(buffer), (void*)&other);
+    buffer[n] = '\0'; 
+    printf("Intermediate Server: Mensaje recibido: %s\n", buffer);
 }
 
 
