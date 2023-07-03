@@ -20,45 +20,23 @@ void MethodsPieces::task( Socket * client ) {
     std::cout << "Server received: " << figure << std::endl;
 }
 
-std::string MethodsPieces::handlePresent(bool isResponse){
-    // Create a UDP socket
-    Socket* socket = new Socket('d');
-    struct sockaddr_in other;
-    char buffer[1024]; 
-    
-    memset(&other, 0, sizeof(other)); 
-    other.sin_family = AF_INET;
-    other.sin_port = htons(INTERMEDIARY_UDP_PORT);
-    printf("handlePresent: Se define puerto INTERMEDIARY_UDP_PORT en el socket\n");
+std::string MethodsPieces::handlePresent(char* response){
+ 
+    // Message to Send: Code Separator IP::Port
+    /** TODO: Añadir IP de este servidor*/
+    std::string message_string = std::to_string(LEGO_DISCOVER) + SEPARATOR + "IP_PIECES_SERVER" + ":" + std::to_string(INTERMEDIARY_UDP_PORT);
 
-    // Set IP for the a specific server
-    inet_pton(AF_INET, "127.0.0.1", &other.sin_addr);
-    other.sin_addr.s_addr = INADDR_ANY;
-    printf("handlePresent: Se define IP 127.0.0.1 en el socket y escucha cualquier IP\n");
+    /** TODO: Especificar IP del server actual*/
+    std::string piecesIP = "IP_PIECES_SERVER";
 
-    socket->recvFrom((void *)buffer, 1024, (void *)&other);
-    printf("handlePresent: Recibe el mensaje broadcast\n");
-    printf("Intermediate message received: %s\n", buffer); 
-    
-    // // Message to Send: Code Separator IP::Port
-    // /** TODO: Añadir IP de este servidor*/
-    // std::string message_string = std::to_string(LEGO_DISCOVER) + SEPARATOR + "127.0.0.1" + ":" + std::to_string(INTERMEDIARY_UDP_PORT);
+    std::string message = std::to_string(LEGO_PRESENT) + SEPARATOR + piecesIP + ":" + std::to_string(PIECES_UDP_PORT);
 
-    // /** TODO: Especificar IP del server actual*/
-    // std::string piecesIP;
+    std::vector<std::string> figuresVector = getFigureNames("figures");
+    for(int i = 0; i < figuresVector.size(); i++) {
+        message += SEPARATOR + figuresVector[i];
+    }
 
-    // std::string message = std::to_string(LEGO_PRESENT) + SEPARATOR + piecesIP + ":" + std::to_string(PIECES_UDP_PORT);
-
-    // std::vector<std::string> figuresVector = getFigureNames("figures");
-    // for(int i = 0; i < figuresVector.size(); i++) {
-    //     message += SEPARATOR + figuresVector[i];
-    // }
-    
-    // socket->sendTo(message.c_str(), message.length(), (void *) &other);
-
-    // socket->Close();
-
-    return "";
+    return message;
 }
 
 std::string MethodsPieces::handleResponse(const std::string& request){

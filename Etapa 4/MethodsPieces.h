@@ -34,7 +34,7 @@ class MethodsPieces{
     /**
      * @brief Indica su dirección IP y las figuras disponibles al servidor solicitante.
      */
-    std::string handlePresent(bool isResponse);
+    std::string handlePresent(char* response);
 
     /**
      * @brief Responde con las piezas de la figura solicitada en formato HTML
