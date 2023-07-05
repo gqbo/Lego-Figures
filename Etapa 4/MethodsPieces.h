@@ -32,9 +32,14 @@ class MethodsPieces{
     void task( Socket * client );
 
     /**
+     * @brief Indica su dirección IP y las figuras disponibles al servidor solicitante por medio de un BROADCAST.
+     */
+    void sendPresent();  // LEGO PRESENT
+
+    /**
      * @brief Indica su dirección IP y las figuras disponibles al servidor solicitante.
      */
-    void handlePresent();
+    void sendPresent(std::string buffer);  // LEGO PRESENT
 
     /**
      * @brief Responde con las piezas de la figura solicitada en formato HTML

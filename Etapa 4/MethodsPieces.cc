@@ -11,6 +11,7 @@
  **/
 
 #include "MethodsPieces.h"
+#include "MethodsCommon.h"
 
 // void MethodsPieces::task( Socket * client ) {
 //     char figure[ BUFSIZE ];
@@ -20,26 +21,80 @@
 //     std::cout << "Server received: " << figure << std::endl;
 // }
 
-void MethodsPieces::handlePresent(){
+void MethodsPieces::sendPresent(){
+    /*----------- CREATES SOCKET UDP ------------*/
+    /*---------AND ENABLES BROADCATS CONFIG ------------*/
+    Socket* socket = new Socket('u');
+    struct sockaddr_in other;
+    int enableBroadcast = 1;
+    setsockopt(socket->getIDSocket(), SOL_SOCKET, SO_BROADCAST, &enableBroadcast, sizeof(enableBroadcast));
+    memset(&other, 0, sizeof(other));
+    other.sin_family = AF_INET; 
+    other.sin_port = htons(INTERMEDIARY_UDP_PORT);
+    /*----------- GETS IP ADDRESS OF THE PC ------------*/
+    /*----------- AND SETS .255 AT THE END ------------*/
+    std::string IPAddress = getIPAddress();
+    std::string IPBroadcast;
+    size_t thirdDot = IPAddress.find('.', IPAddress.find('.', IPAddress.find('.') + 1) + 1);
+
+    if (thirdDot != std::string::npos) {
+        IPBroadcast = IPAddress.substr(0, thirdDot + 1) + "255";
+    }
+    inet_pton(AF_INET, IPBroadcast.c_str(), &other.sin_addr);
+    printf("sendPresent BROADCAST: Se crea socket hacia %s:INTERMEDIARY_UDP_PORT\n", IPBroadcast.c_str());
+    
+    std::string message_string = std::to_string(LEGO_PRESENT) + SEPARATOR + IPAddress + ":" + std::to_string(PIECES_UDP_PORT);
+
+    // Almacena las figuras
+    getFigureNames("figures");
+
+    for(int i = 0; i < figureNames.size(); i++) {
+        message_string += SEPARATOR + figureNames[i];
+    }
+    const char* message = message_string.c_str();
+
+    socket->sendTo((void *)message, strlen(message), (void *)&other);
+    printf("sendPresent BROADCAST: Se envia mensaje PRESENT con info %s:PIECES_UDP_PORT:", IPBroadcast.c_str());\
+    for(int i = 0; i < figureNames.size(); i++) {
+        printf("%s", figureNames[i].c_str());
+    }
+    printf("\n");
+}
+
+void MethodsPieces::sendPresent(std::string buffer){
     Socket* socket = new Socket('u');
     struct sockaddr_in other;
     memset(&other, 0, sizeof(other)); 
     other.sin_family = AF_INET;
     // Se tiene que sacar el puerto y la IP del DISCOVER
-    other.sin_port = htons(INTERMEDIARY_UDP_PORT);
-    inet_pton(AF_INET, "127.0.0.1", &other.sin_addr);
-    printf("handlePresent: Se crea socket hacia 127.0.0.2:INTERMEDIARY_UDP_PORT\n");
+    std::string host_port = buffer.substr(2);
+    std::string discover_ip;
+    std::string discover_port;
+    size_t colonPos = buffer.find(":");
+    if (colonPos != std::string::npos) {
+        discover_ip = buffer.substr(0, colonPos);
+        discover_port = buffer.substr(colonPos + 1);
+    } else {
+        std::cerr << "sendPresent: La cadena no contiene el separador esperado." << std::endl;
+    }
+    other.sin_port = htons(std::stoi(discover_port));
+    inet_pton(AF_INET, discover_ip.c_str(), &other.sin_addr);
+    printf("sendPresent: Se crea socket hacia %s:%s\n", discover_ip.c_str(), discover_port.c_str());
     
-    std::string message_string = std::to_string(LEGO_PRESENT) + SEPARATOR + "127.0.0.1" + ":" + std::to_string(PIECES_UDP_PORT);
+    std::string IPAddress = getIPAddress();
+    std::string message_string = std::to_string(LEGO_PRESENT) + SEPARATOR + IPAddress + ":" + std::to_string(PIECES_UDP_PORT);
 
-    std::vector<std::string> figuresVector = getFigureNames("figures");
-    for(int i = 0; i < figuresVector.size(); i++) {
-        message_string += SEPARATOR + figuresVector[i];
+    for(int i = 0; i < figureNames.size(); i++) {
+        message_string += SEPARATOR + figureNames[i];
     }
     const char* message = message_string.c_str();
 
     socket->sendTo((void *)message, strlen(message), (void *)&other);
-    printf("handlePresent: Se envia mensaje PRESENT con info 127.0.0.1:PIECES_UDP_PORT:figuras...\n");
+    printf("sendPresent: Se envia mensaje PRESENT con info %s:PIECES_UDP_PORT:", IPAddress.c_str());
+    for(int i = 0; i < figureNames.size(); i++) {
+        printf("%s", figureNames[i].c_str());
+    }
+    printf("\n");
 }
 
 std::string MethodsPieces::handleResponse(const std::string& request){
