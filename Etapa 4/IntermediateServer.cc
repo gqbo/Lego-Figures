@@ -8,15 +8,17 @@ void task( Socket * client ) {
     memset( &other, 0, sizeof( other ) );
     /*--- SENDS BROADCAST DISCOVER TO PIECES_UDP_PORT ---*/
     mi.sendDiscover();
-    printf("Pieces (LOCAL): Esperando a recibir mensajes en el puerto INTERMEDIARY_UDP_PORT...\n");
+    printf("Intermediate Server (LOCAL): Esperando a recibir mensajes en el puerto %d...\n", INTERMEDIARY_UDP_PORT);
     for( ; ; ) {
         client->recvFrom((void*)buffer, sizeof(buffer), (void*)&other);
         code_number = buffer[0];
 
-        // switch
         switch (code_number) {
-        case '1' /* constant-expression */:
+        case '1':
             printf("Intermediate Server (LOCAL): Mensaje present recibido: %s\n", buffer);
+
+            mi.handlePresent(buffer);
+            
             break;
         
         default:
@@ -36,7 +38,7 @@ int main(int argc, char** argv) {
     Socket * socketUDP;
     socketUDP = new Socket( 'd' );
     socketUDP->Bind( INTERMEDIARY_UDP_PORT);
-    printf("Intermediate Server: Socket UDP bind a INTERMEDIARY_UDP_PORT\n");
+    printf("Intermediate Server (LOCAL): Socket UDP bind a %d\n", INTERMEDIARY_UDP_PORT);
 
     /*-------- UDP THREAD TO RECEIVE MESSAGES ------------*/
     workerUDP = new std::thread( task, socketUDP );
