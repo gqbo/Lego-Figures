@@ -8,7 +8,7 @@ void task( Socket * client ) {
     memset( &other, 0, sizeof( other ) );
     mp.sendPresent();
     /*----------- RECEIVES UDP MESSAGES ------------*/
-    printf("Pieces (LOCAL): Esperando a recibir mensajes en el puerto PIECES_UDP_PORT...\n");
+    printf("Pieces (LOCAL): Esperando a recibir mensajes en el puerto %d...\n", PIECES_UDP_PORT);
     for ( ; ; ) {
         client->recvFrom((void*)buffer, sizeof(buffer), (void*)&other);
         code_number = buffer[0];
@@ -38,7 +38,7 @@ int main(int argc, char** argv) {
     socketUDP = new Socket('d');
     struct sockaddr_in other;
     socketUDP->Bind(PIECES_UDP_PORT);
-    printf("Pieces: Socket UDP bind a PIECES_UDP_PORT\n");
+    printf("Pieces (LOCAL): Socket UDP bind a %d\n", PIECES_UDP_PORT);
 
     workerUDP = new std::thread( task, socketUDP ); // CREA SOLO 1 HILO
 

@@ -13,6 +13,7 @@
 #include "MethodsPieces.h"
 #include "MethodsCommon.h"
 
+
 // void MethodsPieces::task( Socket * client ) {
 //     char figure[ BUFSIZE ];
    
@@ -41,7 +42,7 @@ void MethodsPieces::sendPresent(){
         IPBroadcast = IPAddress.substr(0, thirdDot + 1) + "255";
     }
     inet_pton(AF_INET, IPBroadcast.c_str(), &other.sin_addr);
-    printf("sendPresent BROADCAST: Se crea socket hacia %s:INTERMEDIARY_UDP_PORT\n", IPBroadcast.c_str());
+    printf("sendPresent BROADCAST: Se crea socket hacia %s:%d\n", IPBroadcast.c_str(), INTERMEDIARY_UDP_PORT);
     
     std::string message_string = std::to_string(LEGO_PRESENT) + SEPARATOR + IPAddress + ":" + std::to_string(PIECES_UDP_PORT);
 
@@ -54,7 +55,7 @@ void MethodsPieces::sendPresent(){
     const char* message = message_string.c_str();
 
     socket->sendTo((void *)message, strlen(message), (void *)&other);
-    printf("sendPresent BROADCAST: Se envia mensaje PRESENT con info %s:PIECES_UDP_PORT:", IPBroadcast.c_str());\
+    printf("sendPresent BROADCAST: Se envia mensaje PRESENT con info %s:%d:", IPAddress.c_str(), PIECES_UDP_PORT);
     for(int i = 0; i < figureNames.size(); i++) {
         printf("%s", figureNames[i].c_str());
     }
@@ -67,19 +68,10 @@ void MethodsPieces::sendPresent(std::string buffer){
     memset(&other, 0, sizeof(other)); 
     other.sin_family = AF_INET;
     // Se tiene que sacar el puerto y la IP del DISCOVER
-    std::string host_port = buffer.substr(2);
-    std::string discover_ip;
-    std::string discover_port;
-    size_t colonPos = buffer.find(":");
-    if (colonPos != std::string::npos) {
-        discover_ip = buffer.substr(0, colonPos);
-        discover_port = buffer.substr(colonPos + 1);
-    } else {
-        std::cerr << "sendPresent: La cadena no contiene el separador esperado." << std::endl;
-    }
-    other.sin_port = htons(std::stoi(discover_port));
-    inet_pton(AF_INET, discover_ip.c_str(), &other.sin_addr);
-    printf("sendPresent: Se crea socket hacia %s:%s\n", discover_ip.c_str(), discover_port.c_str());
+    std::vector<std::string> discoverInfo = splitDiscover(buffer);
+    other.sin_port = htons(std::stoi(discoverInfo[2]));
+    inet_pton(AF_INET, discoverInfo[1].c_str(), &other.sin_addr);
+    printf("sendPresent: Se crea socket hacia %s:%s\n", discoverInfo[1].c_str(), discoverInfo[2].c_str());
     
     std::string IPAddress = getIPAddress();
     std::string message_string = std::to_string(LEGO_PRESENT) + SEPARATOR + IPAddress + ":" + std::to_string(PIECES_UDP_PORT);
@@ -90,7 +82,7 @@ void MethodsPieces::sendPresent(std::string buffer){
     const char* message = message_string.c_str();
 
     socket->sendTo((void *)message, strlen(message), (void *)&other);
-    printf("sendPresent: Se envia mensaje PRESENT con info %s:PIECES_UDP_PORT:", IPAddress.c_str());
+    printf("sendPresent: Se envia mensaje PRESENT con info %s:%d:", IPAddress.c_str(), PIECES_UDP_PORT);
     for(int i = 0; i < figureNames.size(); i++) {
         printf("%s", figureNames[i].c_str());
     }
