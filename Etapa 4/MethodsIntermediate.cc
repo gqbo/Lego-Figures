@@ -7,6 +7,7 @@
  **/
 
 #include "MethodsIntermediate.h"
+#include "MethodsCommon.h"
 #include <iostream>
 
 void MethodsIntermediate::sendDiscover() {
@@ -18,18 +19,26 @@ void MethodsIntermediate::sendDiscover() {
    setsockopt(socket->getIDSocket(), SOL_SOCKET, SO_BROADCAST, &enableBroadcast, sizeof(enableBroadcast));
    memset(&other, 0, sizeof(other));
    other.sin_family = AF_INET; 
-   other.sin_port = htons(PIECES_UDP_PORT); // Se quiere mandar BROADCAST a PIECES_UDP_PORT
-   inet_pton(AF_INET, "127.1.0.255", &other.sin_addr);
+   other.sin_port = htons(PIECES_UDP_PORT);
+   /*----------- GETS IP ADDRESS OF THE PC ------------*/
+   /*----------- AND SETS .255 AT THE END ------------*/
+   std::string IPAddress = getIPAddress();
+   std::string IPBroadcast;
+   size_t thirdDot = IPAddress.find('.', IPAddress.find('.', IPAddress.find('.') + 1) + 1);
+
+   if (thirdDot != std::string::npos) {
+      IPBroadcast = IPAddress.substr(0, thirdDot + 1) + "255";
+   }
+   inet_pton(AF_INET, IPBroadcast.c_str(), &other.sin_addr);
    printf("sendDiscover: Se crea socket hacia BROADCAST:PIECES_UDP_PORT\n");
 
    /*----------- CREATES BROADCAST MESSAGE ------------*/
-   std::string message_string = std::to_string(LEGO_DISCOVER) + SEPARATOR + "LOCAL" + ":" + std::to_string(INTERMEDIARY_UDP_PORT);
+   std::string message_string = std::to_string(LEGO_DISCOVER) + SEPARATOR + IPAddress + ":" + std::to_string(INTERMEDIARY_UDP_PORT);
    const char* message = message_string.c_str();
-   printf("sendDiscover: Se crea mensaje DISCOVER con info LOCAL:INTERMEDIARY_UDP_PORT \n");
 
    /*---- SENDS BROADCAST MESSAGE TO PIECES_UDP_PORT ------*/
    socket->sendTo((void *)message, strlen(message), (void *)&other);
-   printf("sendDiscover: Se envia mensaje DISCOVER con info LOCAL:INTERMEDIARY_UDP_PORT\n");
+   printf("sendDiscover BROADCAST: Se envia mensaje DISCOVER con info %s:INTERMEDIARY_UDP_PORT\n", IPAddress.c_str());
 }
 
 std::string MethodsIntermediate::handleRequest(const std::string& request) {
