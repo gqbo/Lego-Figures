@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
     Socket * socketUDP;
     socketUDP = new Socket( 'd' );
     socketUDP->Bind( INTERMEDIARY_UDP_PORT);
-    printf("Intermediate Server: Socket UDP bind a LOCAL:INTERMEDIARY_UDP_PORT\n");
+    printf("Intermediate Server: Socket UDP bind a INTERMEDIARY_UDP_PORT\n");
 
     /*-------- UDP THREAD TO RECEIVE MESSAGES ------------*/
     workerUDP = new std::thread( task, socketUDP );
