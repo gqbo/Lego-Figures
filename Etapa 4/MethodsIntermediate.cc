@@ -8,7 +8,6 @@
 
 #include "MethodsIntermediate.h"
 #include "MethodsCommon.h"
-#include <iostream>
 
 void MethodsIntermediate::sendDiscover() {
    /*----------- CREATES SOCKET UDP ------------*/
@@ -30,7 +29,7 @@ void MethodsIntermediate::sendDiscover() {
       IPBroadcast = IPAddress.substr(0, thirdDot + 1) + "255";
    }
    inet_pton(AF_INET, IPBroadcast.c_str(), &other.sin_addr);
-   printf("sendDiscover: Se crea socket hacia BROADCAST:PIECES_UDP_PORT\n");
+   printf("sendDiscover BROADCAST: Se crea socket hacia %s:%d\n", IPBroadcast.c_str(), PIECES_UDP_PORT);
 
    /*----------- CREATES BROADCAST MESSAGE ------------*/
    std::string message_string = std::to_string(LEGO_DISCOVER) + SEPARATOR + IPAddress + ":" + std::to_string(INTERMEDIARY_UDP_PORT);
@@ -38,7 +37,7 @@ void MethodsIntermediate::sendDiscover() {
 
    /*---- SENDS BROADCAST MESSAGE TO PIECES_UDP_PORT ------*/
    socket->sendTo((void *)message, strlen(message), (void *)&other);
-   printf("sendDiscover BROADCAST: Se envia mensaje DISCOVER con info %s:INTERMEDIARY_UDP_PORT\n", IPAddress.c_str());
+   printf("sendDiscover BROADCAST: Se envia mensaje DISCOVER con info %s:%d\n", IPAddress.c_str(), INTERMEDIARY_UDP_PORT);
 }
 
 std::string MethodsIntermediate::handleRequest(const std::string& request) {
@@ -71,7 +70,23 @@ std::string MethodsIntermediate::parseResponse(const std::string& html) {
    return "";
 }
 
+void MethodsIntermediate::handlePresent(std::string buffer){
+   std::vector<std::string>infoPresent = splitPresent(buffer);
+   for (size_t i = 3; i < infoPresent.size(); i++) {
+      addMapEntry(infoPresent[i], infoPresent[1]);
+   }
+   
+   // for (const auto& pair : mapTable) {
+   //    std::cout << "FIGURA: " << pair.first << ", IPS:";
+   //    for (const auto& value : pair.second) {
+   //       std::cout << " " << value;
+   //    }
+   //    std::cout << std::endl;
+   // }
+}
+
 void MethodsIntermediate::addMapEntry(std::string figure, std::string ip){
+   printf("Intermediate Server: Se añade al mapa la figura: %s -> %s\n", figure.c_str(), ip.c_str());
    if (mapTable.count(figure) == 0) {
       mapTable[figure] = {ip};  // Crear un nuevo vector con la dirección IP
    } else {

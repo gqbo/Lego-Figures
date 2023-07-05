@@ -42,6 +42,13 @@ class MethodsIntermediate {
     std::string parseResponse(const std::string& html);
 
     /**
+     * @brief 
+     * 
+     * @param buffer 
+     */
+    void handlePresent(std::string buffer);
+
+    /**
      * @brief Se agrega una entrada en el mapa relacionando una figura con una IP.
      * @param figure Figura que pertenece a un servidor de piezas.
      * @param ip IP que pertenece a un servidor de piezas.
