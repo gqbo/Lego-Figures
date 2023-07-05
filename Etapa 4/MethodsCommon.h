@@ -12,12 +12,16 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <sstream>
+#include <vector>
 
 #include <sys/socket.h>
 
 #ifndef METHODSCOMMON_H
 #define METHODSCOMMON_H
 
+/// @brief 
+/// @return 
 std::string getIPAddress() {
     int sock = socket(AF_INET, SOCK_DGRAM, 0);
     if (sock == -1) {
@@ -61,4 +65,39 @@ std::string getIPAddress() {
 
     return std::string(ipAddress);
 }
+
+/// @brief 
+/// @param buffer 
+/// @return 
+std::vector<std::string> splitDiscover(std::string buffer){
+    std::vector<std::string> discoverInfo;
+    std::istringstream iss(buffer);
+    std::string info;
+    while (std::getline(iss, info, char(29))) {
+        std::istringstream iss2(info);
+        std::string subinfo;
+        while (std::getline(iss2, subinfo, ':')) {
+            discoverInfo.push_back(subinfo);
+        }
+    }
+    return discoverInfo;
+}
+
+/// @brief 
+/// @param buffer 
+/// @return 
+std::vector<std::string> splitPresent(std::string buffer){
+    std::vector<std::string> presentInfo;
+    std::istringstream iss(buffer);
+    std::string info;
+    while (std::getline(iss, info, char(29))) {
+        std::istringstream iss2(info);
+        std::string subinfo;
+        while (std::getline(iss2, subinfo, ':')) {
+            presentInfo.push_back(subinfo);
+        }
+    }
+    return presentInfo;
+}
+
 #endif
