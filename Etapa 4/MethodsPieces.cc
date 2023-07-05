@@ -12,40 +12,45 @@
 
 #include "MethodsPieces.h"
 
-void MethodsPieces::task( Socket * client ) {
-    char figure[ BUFSIZE ];
+// void MethodsPieces::task( Socket * client ) {
+//     char figure[ BUFSIZE ];
    
-    client->SSLAccept();
-    client->SSLRead( figure, BUFSIZE );
-    std::cout << "Server received: " << figure << std::endl;
-}
+//     client->SSLAccept();
+//     client->SSLRead( figure, BUFSIZE );
+//     std::cout << "Server received: " << figure << std::endl;
+// }
 
-std::string MethodsPieces::handlePresent(char* response){
- 
-    // Message to Send: Code Separator IP::Port
-    /** TODO: Añadir IP de este servidor*/
-    std::string message_string = std::to_string(LEGO_DISCOVER) + SEPARATOR + "IP_PIECES_SERVER" + ":" + std::to_string(INTERMEDIARY_UDP_PORT);
-
-    /** TODO: Especificar IP del server actual*/
-    std::string piecesIP = "IP_PIECES_SERVER";
-
-    std::string message = std::to_string(LEGO_PRESENT) + SEPARATOR + piecesIP + ":" + std::to_string(PIECES_UDP_PORT);
+void MethodsPieces::handlePresent(){
+    Socket* socket = new Socket('u');
+    struct sockaddr_in other;
+    memset(&other, 0, sizeof(other)); 
+    other.sin_family = AF_INET;
+    // Se tiene que sacar el puerto y la IP del DISCOVER
+    other.sin_port = htons(INTERMEDIARY_UDP_PORT);
+    inet_pton(AF_INET, "127.0.0.1", &other.sin_addr);
+    printf("handlePresent: Se crea socket hacia 127.0.0.2:INTERMEDIARY_UDP_PORT\n");
+    
+    std::string message_string = std::to_string(LEGO_PRESENT) + SEPARATOR + "127.0.0.1" + ":" + std::to_string(PIECES_UDP_PORT);
 
     std::vector<std::string> figuresVector = getFigureNames("figures");
     for(int i = 0; i < figuresVector.size(); i++) {
-        message += SEPARATOR + figuresVector[i];
+        message_string += SEPARATOR + figuresVector[i];
     }
+    const char* message = message_string.c_str();
 
-    return message;
+    socket->sendTo((void *)message, strlen(message), (void *)&other);
+    printf("handlePresent: Se envia mensaje PRESENT con info 127.0.0.1:PIECES_UDP_PORT:figuras...\n");
 }
 
 std::string MethodsPieces::handleResponse(const std::string& request){
     // Create a TCP socket
     Socket* socket = new Socket('s');
+    return "";
 }
 
 
 std::string MethodsPieces::handleRelease(const std::string& figureName){
+    return "";
 }
     
     
