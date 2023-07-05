@@ -9,7 +9,7 @@
 #include "MethodsIntermediate.h"
 #include <iostream>
 
-void MethodsIntermediate::handleDiscover() {
+void MethodsIntermediate::sendDiscover() {
    /*----------- CREATES SOCKET UDP ------------*/
    /*---------AND ENABLES BROADCATS CONFIG ------------*/
    Socket* socket = new Socket('u');
@@ -20,16 +20,16 @@ void MethodsIntermediate::handleDiscover() {
    other.sin_family = AF_INET; 
    other.sin_port = htons(PIECES_UDP_PORT); // Se quiere mandar BROADCAST a PIECES_UDP_PORT
    inet_pton(AF_INET, "127.1.0.255", &other.sin_addr);
-   printf("handleDiscover: Se crea socket hacia 127.1.0.255:PIECES_UDP_PORT\n");
+   printf("sendDiscover: Se crea socket hacia BROADCAST:PIECES_UDP_PORT\n");
 
    /*----------- CREATES BROADCAST MESSAGE ------------*/
-   std::string message_string = std::to_string(LEGO_DISCOVER) + SEPARATOR + "127.0.0.1" + ":" + std::to_string(INTERMEDIARY_UDP_PORT);
+   std::string message_string = std::to_string(LEGO_DISCOVER) + SEPARATOR + "LOCAL" + ":" + std::to_string(INTERMEDIARY_UDP_PORT);
    const char* message = message_string.c_str();
-   printf("handleDiscover: Se crea mensaje DISCOVER con info 127.0.0.1:INTERMEDIARY_UDP_PORT \n");
+   printf("sendDiscover: Se crea mensaje DISCOVER con info LOCAL:INTERMEDIARY_UDP_PORT \n");
 
    /*---- SENDS BROADCAST MESSAGE TO PIECES_UDP_PORT ------*/
    socket->sendTo((void *)message, strlen(message), (void *)&other);
-   printf("handleDiscover: Se envia mensaje DISCOVER con info 127.0.0.1:INTERMEDIARY_UDP_PORT\n");
+   printf("sendDiscover: Se envia mensaje DISCOVER con info LOCAL:INTERMEDIARY_UDP_PORT\n");
 }
 
 std::string MethodsIntermediate::handleRequest(const std::string& request) {

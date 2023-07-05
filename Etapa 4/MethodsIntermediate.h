@@ -29,7 +29,7 @@ class MethodsIntermediate {
      * @brief Realiza un broadcast a traves de UDP el cual solicita a los servidores de piezas 
      * que reciban este mensaje que se reporten respecto al servidor emisor.
      */
-    void handleDiscover();
+    void sendDiscover();
 
     /**
      * @brief Solicita las piezas de una figura al servidor de piezas

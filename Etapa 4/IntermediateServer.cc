@@ -1,25 +1,47 @@
 #include "MethodsIntermediate.h"
 
+void task( Socket * client ) {
+    MethodsIntermediate mi;
+    char buffer[1024];
+    struct sockaddr other;
+    char code_number;
+    memset( &other, 0, sizeof( other ) );
+    /*--- SENDS BROADCAST DISCOVER TO PIECES_UDP_PORT ---*/
+    mi.sendDiscover();
+    printf("Pieces (LOCAL): Esperando a recibir mensajes en el puerto INTERMEDIARY_UDP_PORT...\n");
+    for( ; ; ) {
+        client->recvFrom((void*)buffer, sizeof(buffer), (void*)&other);
+        code_number = buffer[0];
+
+        // switch
+        switch (code_number) {
+        case '1' /* constant-expression */:
+            printf("Intermediate Server (LOCAL): Mensaje present recibido: %s\n", buffer);
+            break;
+        
+        default:
+            break;
+        }
+    }
+   
+}
 
 int main(int argc, char** argv) {
-
     MethodsIntermediate mi;
+    std::thread * workerUDP;
     char buffer[1024];
 
     /*----------- CREATES SOCKET UDP ------------*/
+    /*----- BINDS TO INTERMEDIARY_UDP_PORT ------*/
     Socket * socketUDP;
     socketUDP = new Socket( 'd' );
-    struct sockaddr other;
     socketUDP->Bind( INTERMEDIARY_UDP_PORT);
-    memset( &other, 0, sizeof( other ) );
-    printf("Intermediate Server: Socket UDP bind a 127.0.0.1:INTERMEDIARY_UDP_PORT\n");
+    printf("Intermediate Server: Socket UDP bind a LOCAL:INTERMEDIARY_UDP_PORT\n");
 
-    /*-------- HANDLES UDP BROADCAST MESSAGE ------------*/
-    mi.handleDiscover();
+    /*-------- UDP THREAD TO RECEIVE MESSAGES ------------*/
+    workerUDP = new std::thread( task, socketUDP );
 
-    /*-------- RECEIVES PRESENT MESSAGE ------------*/
-    printf("Intermediate Server (127.0.0.1): Esperando a recibir mensajes en el puerto INTERMEDIARY_UDP_PORT...\n");
-    int n = socketUDP->recvFrom((void*)buffer, sizeof(buffer), (void*)&other);
-    buffer[n] = '\0'; 
-    printf("Intermediate Server (127.0.0.1): Mensaje recibido: %s\n", buffer);
+    // Espera a que el hilo termine
+    workerUDP->join();
+
 }
