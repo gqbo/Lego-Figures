@@ -177,16 +177,19 @@ int Socket::Write( const char *text ) {
  **/
 int Socket::Bind( int port ) {
    int st = -1;
+   this->port = port;
+   int addr_len = 0;
    struct sockaddr * ha;
    struct sockaddr_in host4;
    struct sockaddr_in6 host6;
 
    if (!ipv6) {
+      addr_len = sizeof(sockaddr_in);
       host4.sin_family = AF_INET; 
       host4.sin_port = htons(port); 
       host4.sin_addr.s_addr = htonl(INADDR_ANY); 
 
-      st = bind(this->idSocket, (struct sockaddr *) &host4, sizeof(sockaddr_in));
+      st = bind(this->idSocket, (sockaddr *) &host4, addr_len);
 
       if ( -1 == st ) {	// check for errors
          perror( "Socket::Bind");

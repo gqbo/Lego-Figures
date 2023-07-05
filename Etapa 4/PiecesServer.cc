@@ -1,6 +1,5 @@
 #include "MethodsPieces.h"
 
-
 int main(int argc, char** argv) {
     MethodsPieces mp;
     char buffer[1024];
@@ -10,41 +9,21 @@ int main(int argc, char** argv) {
     socketUDP = new Socket('d');
     struct sockaddr_in other;
     socketUDP->Bind(PIECES_UDP_PORT);
+    int enableBroadcast = 1;
+    setsockopt(socketUDP->getIDSocket(), SOL_SOCKET, SO_BROADCAST, &enableBroadcast, sizeof(enableBroadcast));
     memset( &other, 0, sizeof( other ) );
-    printf("Pieces Server: Socket UDP bind a puerto PIECES_UDP_PORT\n");
+    printf("Pieces: Socket UDP bind a 127.0.0.1:PIECES_UDP_PORT\n");
 
     /*----------- RECEIVES UDP MESSAGES ------------*/
+    printf("Pieces (127.0.0.1): Esperando a recibir mensajes en el puerto PIECES_UDP_PORT...\n");
     int n = socketUDP->recvFrom((void*)buffer, sizeof(buffer), (void*)&other);
     buffer[n] = '\0'; 
-    printf("Pieces: Mensaje BROADCAST recibido: %s\n", buffer);
+    printf("Pieces (127.0.0.1): Mensaje BROADCAST recibido: %s\n", buffer);
 
     /*----------- HANDLES UDP MESSAGES ------------*/
-    std::string presentMessage = mp.handlePresent(buffer);
-    printf("Pieces Server: Crea el mensaje UDP PRESENT\n");
-
-    /*----------- SENDS PRESENT MESSAGE ------------*/
-    memset(&other, 0, sizeof(other)); 
-    other.sin_family = AF_INET;
-    other.sin_port = htons(INTERMEDIARY_UDP_PORT);
-    inet_pton(AF_INET, "127.0.0.2", &other.sin_addr);
-    const char* message = presentMessage.c_str();
-    socketUDP->sendTo((void *)message, strlen(message), (void *)&other);
-    printf("Pieces Server: Envia mensaje a 127.0.0.2:INTERMEDIARY_UDP_PORT\n");
+    // Se tiene que utilizar la info recibida del broadcast, ahora lo hacemos sin utilizarlo
+    mp.handlePresent();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     // mi.addMapEntry("dalmata", "172.16.168.82");
     // mi.addMapEntry("dalmata", "172.16.168.83");
