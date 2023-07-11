@@ -8,34 +8,30 @@
 int main( int argc, char ** argv ) {
    Socket s('s');
    char buffer[ BUFSIZE + 1];
+
+   if (argc < 2) {
+      std::cerr << "Debes proporcionar una dirección IP como argumento." << std::endl;
+      return 1;
+   }
+    
+   std::string ipAddress = argv[1];
+   std::cout << "Dirección IP proporcionada: " << ipAddress << std::endl;
    
    MethodsClient client;
-   // Shows the figures that can be selected
    client.showFigures();
 
-   // Solicitar el nombre de la figura al usuario y lo almacena en input_string.
    std::string input_string = client.requestFigure();
    char* input = new char[input_string.length() + 1];
    strcpy(input, input_string.c_str());
 
    printf("\n");
    s.InitSSL();
-   char* host =  (char *) "127.0.0.1";
-   s.SSLConnect( host, INTERMEDIARY_TCP_PORT ); // Same port as server
-   //printf( "\n\nConnected with %s encryption\n", s.SSLGetCipher() );
-   //s.SSLShowCerts();	
-   if ( argc > 1 ) {
-      s.SSLWrite( argv[1], sizeof(argv[1]) );		// Send first program argument to server
-   } else {
-      s.SSLWrite( input, sizeof(input) );
-   }
-   // s.Read( buffer, BUFSIZE );	// Read answer sent back from server
-   // printf( "%s\n", buffer );	// Print received string
-   // std::cout << html << std::endl;
-
-   int count, itr_count = 0;  // Contador de iteraciones.
-
-   // String para almacenar la respuesta del servidor web.
+   char* host =  (char *) ipAddress.c_str();
+   s.SSLConnect( host, INTERMEDIARY_TCP_PORT );
+   s.SSLWrite( input, sizeof(input) );
+   
+   std::cout << "Se envia solicitud de " << input <<" al Intermediario: " << ipAddress << std::endl;
+   int count, itr_count = 0;
    std::string html;
 
    while ((count = s.SSLRead(buffer, BUFSIZE)) > 0) {
@@ -43,7 +39,9 @@ int main( int argc, char ** argv ) {
       html += buffer;
       itr_count++;
    }
-   client.displayLegos(html);
+   std::cout << "Se recibe solicitud de " << input <<" del Intermediario: " << ipAddress << std::endl;
+   printf("\n");
+   printf("%s", html.c_str());
 
    delete[] input;
 }

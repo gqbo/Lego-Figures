@@ -20,8 +20,8 @@
 #ifndef METHODSCOMMON_H
 #define METHODSCOMMON_H
 
-/// @brief 
-/// @return 
+/// @brief Obtiene la dirección IP
+/// @return Dirección IP obtenida
 std::string getIPAddress() {
     int sock = socket(AF_INET, SOCK_DGRAM, 0);
     if (sock == -1) {
@@ -66,9 +66,9 @@ std::string getIPAddress() {
     return std::string(ipAddress);
 }
 
-/// @brief 
-/// @param buffer 
-/// @return 
+/// @brief Divide la información de un Discover
+/// @param buffer String de información
+/// @return Vector con información dividida
 std::vector<std::string> splitDiscover(std::string buffer){
     std::vector<std::string> discoverInfo;
     std::istringstream iss(buffer);
@@ -83,9 +83,9 @@ std::vector<std::string> splitDiscover(std::string buffer){
     return discoverInfo;
 }
 
-/// @brief 
-/// @param buffer 
-/// @return 
+/// @brief Divide la información de un Present
+/// @param buffer String de información
+/// @return Vector con información dividida
 std::vector<std::string> splitPresent(std::string buffer){
     std::vector<std::string> presentInfo;
     std::istringstream iss(buffer);

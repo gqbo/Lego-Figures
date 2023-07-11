@@ -9,7 +9,7 @@
 #define INTERMEDIARY_TCP_PORT 3142  /**< Intermediary Server TCP Port */
 
 #define PIECES_UDP_PORT 4849  /**< Pieces Server UDP Port */
-#define PIECES_TCP_PORT 4850  /**< Pieces Server UDP Port */
+#define PIECES_TCP_PORT 4850  /**< Pieces Server TCP Port */
 
 /*--------------------------------Timeouts------------------------------------*/
 
