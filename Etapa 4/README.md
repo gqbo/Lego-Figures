@@ -31,6 +31,11 @@ No importa el orden en que se ejecuten el programa funciona.
 
 Para los casos de prueba se intenta escribir entradas de texto no válidas que podrían lograr que el programa se caiga. Entre estos casos de prueba están, escribir caracteres numéricos, entradas de texto que no coincidan con ninguna figura, carácteres especiales etc. Para el manejo de estos casos aparte, se implementa un mensaje de error que imprime el siguiente texto en caso de que la entrada no coincida con alguna de las figuras disponibles: "La figura no existe o no se encontraron piezas de lego para esta figura".
 
+### **Más documentación del proyecto:**
+
+Para más información sobre el proyecto en general, con sus distintas etapas, puede ver el pdf en la carpeta docs de este proyecto.
+
+
 ## **Créditos**
 
 Copyright 2023.
