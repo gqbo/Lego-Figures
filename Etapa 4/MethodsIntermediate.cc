@@ -9,6 +9,9 @@
 #include "MethodsIntermediate.h"
 #include "MethodsCommon.h"
 
+// #define IP_ADDRESS "172.16.123.84"
+// #define IP_BROADCAST "172.16.123.95"
+
 void MethodsIntermediate::sendDiscover() {
    /*----------- CREATES SOCKET UDP ------------*/
    /*---------AND ENABLES BROADCATS CONFIG ------------*/
@@ -28,7 +31,9 @@ void MethodsIntermediate::sendDiscover() {
    if (thirdDot != std::string::npos) {
       IPBroadcast = IPAddress.substr(0, thirdDot + 1) + "255";
    }
-   inet_pton(AF_INET, IPBroadcast.c_str(), &other.sin_addr);
+   // inet_pton(AF_INET, IP_BROADCAST, &other.sin_addr);
+   other.sin_addr.s_addr = inet_addr(IPBroadcast.c_str());
+
    printf("sendDiscover BROADCAST: Se crea socket hacia %s:%d\n", IPBroadcast.c_str(), PIECES_UDP_PORT);
 
    /*----------- CREATES BROADCAST MESSAGE ------------*/
@@ -40,40 +45,72 @@ void MethodsIntermediate::sendDiscover() {
    printf("sendDiscover BROADCAST: Se envia mensaje DISCOVER con info %s:%d\n", IPAddress.c_str(), INTERMEDIARY_UDP_PORT);
 }
 
-std::string MethodsIntermediate::handleRequest(const std::string& request) {
-   // Create a TCP socket
-   Socket* socket = new Socket('s');
-   // Obtain server IP from map
-
-   /** TODO: Programar obtención de IP Según figura */
-   // Utilizar mapa
-   char * PIECES_SERVER_IP; // Pendiente
-
-   socket->Connect(PIECES_SERVER_IP, PIECES_TCP_PORT);
-   // Construct the request message: Code Separator Figure
-   std::string message = std::to_string(LEGO_REQUEST) + SEPARATOR + request;
-   // Send the request to the pieces server
-   socket->Write(message.c_str(), message.length());
-   // Read the response from the pieces server
-   char responseBuffer[BUFSIZE];
-   int bytesRead = socket->Read(responseBuffer, BUFSIZE);
-   std::string response(responseBuffer, bytesRead);
-   socket->Close();
-
-   /** TODO: Parsear response*/
-   // Utilizar "Parse Response"
-
-   return response;
-}
-
-std::string MethodsIntermediate::parseResponse(const std::string& html) {
-   return "";
-}
-
 void MethodsIntermediate::handlePresent(std::string buffer){
    std::vector<std::string>infoPresent = splitPresent(buffer);
    for (size_t i = 3; i < infoPresent.size(); i++) {
       addMapEntry(infoPresent[i], infoPresent[1]);
+   }
+}
+
+std::string MethodsIntermediate::createRequest(std::string figure) {
+   std::string message = std::to_string(LEGO_REQUEST) + SEPARATOR + figure;
+   return message;
+}
+
+std::string MethodsIntermediate::sendRequest(std::string ip_piezas, std::string request_string){
+   Socket client('s');
+   char buffer[BUFSIZE];
+   client.InitSSL();
+   client.SSLConnect((char*)ip_piezas.c_str(), PIECES_TCP_PORT);
+
+   char* request = new char[request_string.length() + 1];
+   std::strcpy(request, request_string.c_str());
+
+   printf("Intermediate Server (LOCAL): Nuevo socket TCP envía %s al servidor de piezas %s\n", request, ip_piezas.c_str());
+   client.SSLWrite(request, strlen(request));
+   // READ
+   int count, itr_count = 0;
+   std::string html;
+   while ((count = client.SSLRead(buffer, BUFSIZE)) > 0) {
+      buffer[count] = '\0';
+      html += buffer;
+      itr_count++;
+   }
+   printf("Intermediate Server (LOCAL): Nuevo socket TCP recibe RESPONSE que trae HTML\n");
+   // TODO: QUITAR CODIGO SEPARATOR FIGURE SEPARATOR, para dejar el html solo
+   return html;
+}
+
+std::string MethodsIntermediate::parseResponse(const std::string& html) {
+   int total_quantity = 0;
+   std::string parsed_html;
+   std::regex regex(R"(<TR><TD ALIGN=center>\s*(\d+)\s*</TD>\s*<TD ALIGN=center>\s*(.+?)\s*</TD>)");
+   std::sregex_iterator it(html.begin(), html.end(), regex); 
+   std::sregex_iterator end;
+   
+   while (it != end) {
+      std::smatch match = *it;
+      int quantity = std::stoi(match[1].str());
+      total_quantity += quantity;
+      std::string description = match[2].str();
+      parsed_html +=  std::to_string(quantity) + " " + description + "\n";
+      ++it;
+   }
+   
+   if (total_quantity == 0) {
+      parsed_html = "La figura no existe o no se encontraron piezas de lego para esta figura.\n";
+   } else {
+      parsed_html += "Total de piezas para armar esta figura: " + std::to_string(total_quantity) + "\n";
+   }
+   return parsed_html;
+}
+
+void MethodsIntermediate::addMapEntry(std::string figure, std::string ip){
+   printf("Intermediate Server (LOCAL): Se añade al mapa la figura: %s -> %s\n", figure.c_str(), ip.c_str());
+   if (mapTable.count(figure) == 0) {
+      mapTable[figure] = {ip};  // Crear un nuevo vector con la dirección IP
+   } else {
+      mapTable[figure].push_back(ip);  // Agregar la dirección IP al vector existente
    }
    
    // for (const auto& pair : mapTable) {
@@ -83,15 +120,6 @@ void MethodsIntermediate::handlePresent(std::string buffer){
    //    }
    //    std::cout << std::endl;
    // }
-}
-
-void MethodsIntermediate::addMapEntry(std::string figure, std::string ip){
-   printf("Intermediate Server: Se añade al mapa la figura: %s -> %s\n", figure.c_str(), ip.c_str());
-   if (mapTable.count(figure) == 0) {
-      mapTable[figure] = {ip};  // Crear un nuevo vector con la dirección IP
-   } else {
-      mapTable[figure].push_back(ip);  // Agregar la dirección IP al vector existente
-   }
 }
 
 void MethodsIntermediate::removeMapEntry(std::string ip){
@@ -117,22 +145,24 @@ void MethodsIntermediate::removeMapEntry(std::string ip){
 
 }
 
-std::string MethodsIntermediate::getMapEntry(std::string figure){
-   std::string result;
-    
-   auto it = mapTable.find(figure);
-   if (it != mapTable.end()) {
-      std::vector<std::string>& ipVector = it->second;
-      result += figure + ": ";
+std::string MethodsIntermediate::getMapEntry(std::string figure) {
+    std::string result = "";
+    auto it = mapTable.find(figure);
+    if (it != mapTable.end()) {
+        std::vector<std::string>& ipVector = it->second;
 
-      for (const auto& ip : ipVector) {
-         result += ip + " ";
-      }
-   }
-    
-   return result;
+        if (!ipVector.empty()) {
+            result = ipVector[0];
+        }
+    }
+    return result;
 }
 
 std::map< std::string, std::vector<std::string> > MethodsIntermediate::getMap(){
    return mapTable;
+}
+
+bool MethodsIntermediate::containsFigure(const std::string& figure) {
+    auto it = mapTable.find(figure);
+    return it != mapTable.end();
 }

@@ -13,16 +13,11 @@
 #include "MethodsPieces.h"
 #include "MethodsCommon.h"
 
+// #define IP_ADDRESS "172.16.123.84"
+// #define IP_BROADCAST "172.16.123.95"
 
-// void MethodsPieces::task( Socket * client ) {
-//     char figure[ BUFSIZE ];
-   
-//     client->SSLAccept();
-//     client->SSLRead( figure, BUFSIZE );
-//     std::cout << "Server received: " << figure << std::endl;
-// }
 
-void MethodsPieces::sendPresent(){
+void MethodsPieces::sendPresentBroadcast(){
     /*----------- CREATES SOCKET UDP ------------*/
     /*---------AND ENABLES BROADCATS CONFIG ------------*/
     Socket* socket = new Socket('u');
@@ -41,7 +36,8 @@ void MethodsPieces::sendPresent(){
     if (thirdDot != std::string::npos) {
         IPBroadcast = IPAddress.substr(0, thirdDot + 1) + "255";
     }
-    inet_pton(AF_INET, IPBroadcast.c_str(), &other.sin_addr);
+    // inet_pton(AF_INET, IP_BROADCAST, &other.sin_addr);
+    other.sin_addr.s_addr = inet_addr(IPBroadcast.c_str());
     printf("sendPresent BROADCAST: Se crea socket hacia %s:%d\n", IPBroadcast.c_str(), INTERMEDIARY_UDP_PORT);
     
     std::string message_string = std::to_string(LEGO_PRESENT) + SEPARATOR + IPAddress + ":" + std::to_string(PIECES_UDP_PORT);
@@ -74,7 +70,7 @@ void MethodsPieces::sendPresent(std::string buffer){
     printf("sendPresent: Se crea socket hacia %s:%s\n", discoverInfo[1].c_str(), discoverInfo[2].c_str());
     
     std::string IPAddress = getIPAddress();
-    std::string message_string = std::to_string(LEGO_PRESENT) + SEPARATOR + IPAddress + ":" + std::to_string(PIECES_UDP_PORT);
+    std::string message_string = std::to_string(LEGO_PRESENT) + SEPARATOR + IPAddress.c_str() + ":" + std::to_string(PIECES_UDP_PORT);
 
     for(int i = 0; i < figureNames.size(); i++) {
         message_string += SEPARATOR + figureNames[i];
@@ -89,10 +85,39 @@ void MethodsPieces::sendPresent(std::string buffer){
     printf("\n");
 }
 
-std::string MethodsPieces::handleResponse(const std::string& request){
+std::string MethodsPieces::sendResponse(const std::string& request){
     // Create a TCP socket
-    Socket* socket = new Socket('s');
-    return "";
+    // AGARRAR EL FIGURE DEL REQUEST (REQUEST + SEPARATOR + FIGURE)
+    size_t separatorPos = request.find(char(29)); // Buscar la posición del carácter de separación
+    std::string figure = "";
+    if (separatorPos != std::string::npos) { // Si se encuentra el carácter de separación
+        figure = request.substr(separatorPos + 1); // Extraer el nombre a partir de la posición siguiente al separador
+    }
+
+    std::string htmlName;
+    htmlName = "figures/" + figure + ".html";
+    printf("sendResponse: NOMBRE DEL ARCHIVO QUE VA A ABRIR: %s\n", htmlName.c_str());
+
+    std::ifstream file(htmlName, std::ios::binary);
+    if (!file.is_open()) {
+        std::cerr << "Error al abrir el archivo" << std::endl;
+    }
+
+   std::string html_string;
+   std::string line;
+   while (std::getline(file, line)) {
+      html_string += line;
+   }
+
+   file.close();
+    
+    // LEGO_RESPONSE + SEPARATOR + FIGURE + SEPARATOR + HTML
+
+    std::string message_string = std::to_string(LEGO_RESPONSE) + SEPARATOR + figure + SEPARATOR + html_string;
+    
+    // HACER EL RESPONSE
+    
+    return message_string;
 }
 
 
