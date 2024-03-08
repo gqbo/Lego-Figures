@@ -1,0 +1,61 @@
+repo_name: gqbo/Lego-Figures
+report_id: d9beb3eafa94e0ed19d32406c533c45f
+version: 0.1
+repo_type: Public
+timestamp: '2024-03-08T21:50:12+00:00'
+requested_by: sebastianrodrigueztencio
+provider: github
+branch: main
+detected_tools_count: 5
+tools:
+- name: Assembly Language
+  description: A low-level programming language
+  website_url: https://en.wikipedia.org/wiki/Assembly_language
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Languages
+  image_url: https://img.stackshare.io/service/4934/default_71f18bbdc61fb88cefb66415bb55dc6f1e60e5ec.png
+  detection_source_url: https://github.com/gqbo/Lego-Figures
+  detection_source: Repo Metadata
+- name: C lang
+  description: One of the most widely used programming languages of all time
+  website_url: http://en.wikipedia.org/wiki/C_(programming_language)
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Languages
+  image_url: https://img.stackshare.io/no-img-open-source.png
+  detection_source_url: https://github.com/gqbo/Lego-Figures
+  detection_source: Repo Metadata
+- name: C++
+  description: Has imperative, object-oriented and generic programming features, while
+    also providing the facilities for low level memory manipulation
+  website_url: http://www.cplusplus.com/
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Languages
+  image_url: https://img.stackshare.io/service/1049/cplusplus.png
+  detection_source_url: https://github.com/gqbo/Lego-Figures
+  detection_source: Repo Metadata
+- name: Git
+  description: Fast, scalable, distributed revision control system
+  website_url: http://git-scm.com/
+  open_source: true
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Version Control System
+  image_url: https://img.stackshare.io/service/1046/git.png
+  detection_source_url: https://github.com/gqbo/Lego-Figures
+  detection_source: Repo Metadata
+- name: Postscript
+  description: Mailchimp for SMS
+  website_url: https://www.postscript.io/
+  open_source: false
+  hosted_saas: false
+  category: Communications
+  sub_category: Voice and SMS
+  image_url: https://img.stackshare.io/service/10628/YjdR4whL_400x400.png
+  detection_source_url: https://github.com/gqbo/Lego-Figures
+  detection_source: Repo Metadata
